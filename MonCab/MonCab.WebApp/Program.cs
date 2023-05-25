@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
-using MonCab.Module.Data;
-using MudBlazor.Services;
+
+using MonCab.Module.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,8 +11,9 @@ StaticWebAssetsLoader.UseStaticWebAssets(builder.Environment, builder.Configurat
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
-builder.Services.AddMudServices();
+
+builder.Services.ConfigureMudServices();
+builder.Services.ConfigureServices();
 
 var app = builder.Build();
 

@@ -1,7 +1,8 @@
 using System.Threading.Tasks;
 using System;
+using MonCab.Module.Data;
 
-namespace MonCab.Module.Data
+namespace MonCab.Module.Services
 {
     public class WeatherForecastService
     {
