@@ -8,6 +8,7 @@ namespace MonCab.Module.Extensions
         public static void ConfigureServices(this IServiceCollection services)
         {
             services.AddSingleton<WeatherForecastService>();
+            services.AddSingleton<PatientService>();
             
         }
     }

@@ -1,0 +1,43 @@
+﻿@page "/patients"
+@using MonCab.Module.Data
+@using MonCab.Module.Services
+@inject PatientService PatientService
+
+<PageTitle>Patients</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Patients</MudText>
+<MudText Class="mb-8">This component demonstrates fetching data from the server.</MudText>
+@if (patients == null)
+{
+    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+}
+else
+{
+    <MudTable Items="patients" Hover="true" SortLabel="Sort By" Elevation="0">
+        <HeaderContent>
+            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<Patient, object>(x=>x.Date)">Date</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Patient, object>(x=>x.Prenom)">Prenom</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Patient, object>(x=>x.Nom)">Nom</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Patient, object>(x=>x.Summary!)">Commentaire</MudTableSortLabel></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Date">@context.Date</MudTd>
+            <MudTd DataLabel="Prenom">@context.Prenom</MudTd>
+            <MudTd DataLabel="Nom">@context.Nom</MudTd>
+            <MudTd DataLabel="Summary">@context.Summary</MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+        </PagerContent>
+    </MudTable>
+}
+
+
+@code {
+    private Patient[]? patients;
+
+    protected override async Task OnInitializedAsync()
+    {
+        patients = await PatientService.GetPatientAsync(DateTime.Now);
+    }
+}
