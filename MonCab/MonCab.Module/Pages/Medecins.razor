@@ -1,0 +1,49 @@
+﻿@page "/medecins"
+@using MonCab.Module.Data
+@using MonCab.Module.Services
+@inject MedecinService MedecinService
+
+<PageTitle>Médecins</PageTitle>
+
+<MudText Typo="Typo.h3" GutterBottom="true">Médecins</MudText>
+
+@if (medecins == null)
+{
+    <MudProgressCircular Color="Color.Default" Indeterminate="true" />
+}
+else
+{
+    <MudTable Items="medecins" Hover="true" SortLabel="Sort By" Elevation="0">
+        <HeaderContent>
+            <MudTh><MudTableSortLabel SortBy="new Func<Medecin, object>(x=>x.Nom!)">Médecin</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Medecin, object>(x=>x.NombrePatients)">Nombre patients</MudTableSortLabel></MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd DataLabel="Nom">@context.Nom</MudTd>
+            <MudTd DataLabel="Nombre Patients">
+                <MudTooltip>
+                    <ChildContent>
+                        <MudIconButton Icon="@Icons.Material.Filled.Groups" />
+                    </ChildContent>
+                    <TooltipContent>
+                        <MudText>@string.Join(", ", context.NomsPatients)</MudText>
+                    </TooltipContent>
+                </MudTooltip>
+                @context.NombrePatients
+            </MudTd>
+        </RowTemplate>
+        <PagerContent>
+            <MudTablePager PageSizeOptions="new int[]{50, 100}" />
+        </PagerContent>
+    </MudTable>
+}
+
+
+@code {
+    private Medecin[]? medecins;
+
+    protected override async Task OnInitializedAsync()
+    {
+        medecins = await MedecinService.GetMedecinAsync(DateTime.Now);
+    }
+}

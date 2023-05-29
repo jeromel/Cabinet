@@ -4,7 +4,7 @@ using MonCab.Module.Data;
 
 namespace MonCab.Module.Services
 {
-    public class PatientService
+    public class MedecinService
     {
         private static readonly string[] Medecins = new[]
         {
@@ -18,21 +18,18 @@ namespace MonCab.Module.Services
 
         private static readonly string[] Noms = new[]
         {
-            "Durand", "Dupont", "Deniès", "Lerond", "Leguerec", "Arkano", "Turnutin"
+            "Durand", "Dupont", "Deniès", "Lerond", "Leguerec", "Arkano", "Turnutin", "Bobo", "Marnottin", "Valor", "Scapin", "Butago"
         };
 
-        public Task<Patient[]> GetPatientAsync(DateTime startDate)
+        public Task<Medecin[]> GetMedecinAsync(DateTime startDate)
         {
             var rng = new Random();
-            return Task.FromResult(Enumerable.Range(1, 15).Select(index => new Patient
-            {
-                DateNaissance = startDate.AddDays(index).AddYears(-index),
-                Nom = Noms[rng.Next(Noms.Length)],
-                Prenom = Prenoms[rng.Next(Prenoms.Length)],
-                NomMedecin = Medecins[rng.Next(Medecins.Length)],
-                DatePriseEnCharge = startDate.AddDays(index),
-
-            }).ToArray());
+            return Task.FromResult(Enumerable.Range(1, 15).Select(index => new Medecin
+            (
+                Medecins[rng.Next(Medecins.Length)],
+                Enumerable.Range(1, rng.Next(1, 10)).Select(index => Noms[rng.Next(Noms.Length)]).ToList(),
+                rng.Next(1, 10)
+            )).ToArray());
         }
     }
 }

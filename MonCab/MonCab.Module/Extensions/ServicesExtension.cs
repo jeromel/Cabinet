@@ -9,6 +9,7 @@ namespace MonCab.Module.Extensions
         {
             services.AddSingleton<WeatherForecastService>();
             services.AddSingleton<PatientService>();
+            services.AddSingleton<MedecinService>();
             
         }
     }

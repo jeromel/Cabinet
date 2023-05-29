@@ -15,16 +15,20 @@ else
 {
     <MudTable Items="patients" Hover="true" SortLabel="Sort By" Elevation="0">
         <HeaderContent>
-            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<Patient, object>(x=>x.Date)">Date</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<Patient, object>(x=>x.DateNaissance)">Date de naissance</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<Patient, object>(x=>x.Prenom)">Prenom</MudTableSortLabel></MudTh>
             <MudTh><MudTableSortLabel SortBy="new Func<Patient, object>(x=>x.Nom)">Nom</MudTableSortLabel></MudTh>
-            <MudTh><MudTableSortLabel SortBy="new Func<Patient, object>(x=>x.Summary!)">Commentaire</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel SortBy="new Func<Patient, object>(x=>x.NomMedecin!)">Médecin</MudTableSortLabel></MudTh>
+            <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<Patient, object>(x=>x.DatePriseEnCharge)">Date de prise en charge</MudTableSortLabel></MudTh>
+
         </HeaderContent>
         <RowTemplate>
-            <MudTd DataLabel="Date">@context.Date</MudTd>
+            <MudTd DataLabel="Date">@context.DateNaissance.ToString("dd/MM/yyyy")</MudTd>
             <MudTd DataLabel="Prenom">@context.Prenom</MudTd>
             <MudTd DataLabel="Nom">@context.Nom</MudTd>
-            <MudTd DataLabel="Summary">@context.Summary</MudTd>
+            <MudTd DataLabel="Médecin">@context.NomMedecin</MudTd>
+            <MudTd DataLabel="Date">@context.DatePriseEnCharge.ToString("dd/MM/yyyy")</MudTd>
+
         </RowTemplate>
         <PagerContent>
             <MudTablePager PageSizeOptions="new int[]{50, 100}" />
