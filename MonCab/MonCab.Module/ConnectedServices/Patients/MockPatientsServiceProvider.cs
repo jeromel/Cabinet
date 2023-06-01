@@ -1,4 +1,5 @@
 ﻿using MonCab.Module.Models;
+using System.Collections.ObjectModel;
 
 namespace MonCab.Module.ConnectedServices.Patients
 {
@@ -20,8 +21,8 @@ namespace MonCab.Module.ConnectedServices.Patients
         };
 
 
-  private ICollection<Patient> patients; 
-  private ICollection<Medecin> medecins;
+  private ICollection<Patient> _patients = new ObservableCollection<Patient>();
+  private ICollection<Medecin> _medecins = new ObservableCollection<Medecin>();
 
   public MockPatientsServiceProvider()
   {
@@ -35,31 +36,36 @@ namespace MonCab.Module.ConnectedServices.Patients
 
    var rng = new Random();
 
-   patients = Enumerable.Range(1, 15).Select(index => new Patient
-   {
-    DateNaissance = startDate.AddDays(index).AddYears(-index),
-    Nom = Noms[rng.Next(Noms.Length)],
-    Prenom = Prenoms[rng.Next(Prenoms.Length)],
-    NomMedecin = Medecins[rng.Next(Medecins.Length)],
-    DatePriseEnCharge = startDate.AddDays(index),
-
-   }).ToList();
-
-   medecins = Enumerable.Range(1, 15).Select(index => new Medecin
+   _medecins = Enumerable.Range(1, 15).Select(index => new Medecin
    (
+       Guid.NewGuid(),
        Medecins[rng.Next(Medecins.Length)],
        Enumerable.Range(1, rng.Next(1, 10)).Select(index => Noms[rng.Next(Noms.Length)]).ToList(),
        rng.Next(1, 10)
    )).ToArray();
+
+   foreach (var med in _medecins)
+   {
+    var pat = new Patient()
+    {
+     DateNaissance = startDate.AddDays(rng.Next(0,28)).AddYears(-rng.Next(0,18)),
+     Nom = Noms[rng.Next(Noms.Length)],
+     Prenom = Prenoms[rng.Next(Prenoms.Length)],
+     NomMedecin = Medecins[rng.Next(Medecins.Length)],
+     DatePriseEnCharge = startDate.AddDays(-rng.Next(0,365)),
+    };
+
+    _patients.Add(pat);
+   }
   }
-  
+
   public Task<ICollection<Patient>> GetPatientAsync()
   {
-   return Task.FromResult(patients);
+   return Task.FromResult(_patients);
   }
   public Task<ICollection<Medecin>> GetMedecinAsync()
   {
-   return Task.FromResult(medecins);
+   return Task.FromResult(_medecins);
   }
  }
 }
