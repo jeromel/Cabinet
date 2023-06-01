@@ -4,6 +4,6 @@ namespace MonCab.Module.Services.PatientService
 {
  public interface IMedecinService
  {
-  Task<Medecin[]> GetMedecinAsync();
+  Task<ICollection<Medecin>> GetMedecinAsync();
  }
 }

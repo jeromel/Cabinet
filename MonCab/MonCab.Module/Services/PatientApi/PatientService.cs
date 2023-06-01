@@ -12,7 +12,7 @@ namespace MonCab.Module.Services.PatientService
    this.patientServiceProvider = patientServiceProvider;
   }
 
-  public async Task<Patient[]> GetPatientAsync()
+  public async Task<ICollection<Patient>> GetPatientAsync()
   {
    return await patientServiceProvider.GetPatientAsync();
   }
