@@ -119,7 +119,7 @@ else
 <MudText Inline="true">Selected1: @selectedItem1?.Nom</MudText>
 
 <MudExpansionPanels Style="flex: 1;">
-	<MudExpansionPanel Text="Show inline-edit event log">
+	<MudExpansionPanel Text="Liste des modifications">
 		@foreach (var message in editEvents)
 		{
 			<MudText>@message</MudText>
@@ -179,12 +179,12 @@ else
 				DatePriseEnCharge = ((Patient)Patient).DatePriseEnCharge,
 				NomMedecin = ((Patient)Patient).NomMedecin
 			};
-		AddEditionEvent($"RowEditPreview event: made a backup of Patient {((Patient)Patient).Nom}");
+		AddEditionEvent($"Previsualisation: sauvegarde effectuée pour Patient {((Patient)Patient).Nom}");
 	}
 
 	private void ItemHasBeenCommitted(object Patient)
 	{
-		AddEditionEvent($"RowEditCommit event: Changes to Patient {((Patient)Patient).Nom} committed");
+		AddEditionEvent($"Edition: modification enregistrée pour {((Patient)Patient).Nom}");
 	}
 
 	private void ResetItemToOriginalValues(object Patient)
@@ -195,7 +195,7 @@ else
 		((Patient)Patient).DateNaissance = PatientBeforeEdit.DateNaissance;
 		((Patient)Patient).DatePriseEnCharge = PatientBeforeEdit.DatePriseEnCharge;
 		((Patient)Patient).NomMedecin = PatientBeforeEdit.NomMedecin;
-		AddEditionEvent($"RowEditCancel event: Editing of Patient {((Patient)Patient).Nom} canceled");
+		AddEditionEvent($"Annulation: modification annulée pour {((Patient)Patient).Nom}");
 	}
 
 	private bool FilterFunc(Patient Patient)
