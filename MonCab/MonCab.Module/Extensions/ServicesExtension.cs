@@ -1,5 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using MonCab.Module.Services;
+using MonCab.Module.Services.PatientService;
 
 namespace MonCab.Module.Extensions
 {

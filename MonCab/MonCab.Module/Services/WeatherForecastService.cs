@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 using System;
-using MonCab.Module.Data;
+using MonCab.Module.Models;
 
 namespace MonCab.Module.Services
 {

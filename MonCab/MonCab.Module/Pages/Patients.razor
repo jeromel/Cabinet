@@ -1,7 +1,7 @@
 ﻿@page "/patients"
-@using MonCab.Module.Data
-@using MonCab.Module.Services
-@inject PatientService PatientService
+@using MonCab.Module.Services.PatientService;
+@using MonCab.Module.Models
+@inject IPatientService PatientService
 
 <PageTitle>Patients</PageTitle>
 
@@ -42,6 +42,6 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        patients = await PatientService.GetPatientAsync(DateTime.Now);
+        patients = await PatientService.GetPatientAsync();
     }
 }
