@@ -2,7 +2,7 @@
 
 namespace MonCab.Module.ConnectedServices.Patients
 {
-    public class PatientsServiceProvider : IPatientsServiceProvider
+    public class MockPatientsServiceProvider : IPatientsServiceProvider
     {
         private static readonly string[] Medecins = new[]
               {
