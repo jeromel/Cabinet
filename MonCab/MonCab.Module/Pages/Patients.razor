@@ -1,12 +1,16 @@
 ﻿@page "/patients"
 @using MonCab.Module.Services.PatientService;
 @using MonCab.Module.Models
+@using MudBlazor
 @inject IPatientService PatientService
+@inject ISnackbar Snackbar
 
 <PageTitle>Patients</PageTitle>
 
 <MudText Typo="Typo.h3" GutterBottom="true">Patients</MudText>
-<MudText Class="mb-8">This component demonstrates fetching data from the server.</MudText>
+
+
+@*
 @if (patients == null)
 {
     <MudProgressCircular Color="Color.Default" Indeterminate="true" />
@@ -36,7 +40,6 @@ else
     </MudTable>
 }
 
-
 @code {
     private ICollection<Patient>? patients;
 
@@ -44,4 +47,168 @@ else
     {
         patients = await PatientService.GetPatientAsync();
     }
+}*@
+
+<MudTable Items="@patients" Dense="@dense" Hover="@hover" ReadOnly="@ronly" CanCancelEdit="@canCancelEdit" Filter="new Func<Patient,bool>(FilterFunc)"
+										@bind-SelectedItem="selectedItem1" SortLabel="Sort By" CommitEditTooltip="Commit Edit"
+										OnCommitEditClick="@(() => Snackbar.Add("Commit Edit Handler Invoked"))" RowEditPreview="BackupItem" RowEditCancel="ResetItemToOriginalValues"
+										RowEditCommit="ItemHasBeenCommitted" IsEditRowSwitchingBlocked="@blockSwitch" ApplyButtonPosition="@applyButtonPosition" EditButtonPosition="@editButtonPosition" EditTrigger="@editTrigger">
+	<ToolBarContent>
+		<MudText Typo="Typo.h6">Periodic Patients</MudText>
+		<MudSpacer />
+		<MudTextField @bind-Value="searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+	</ToolBarContent>
+	<ColGroup>
+		@if (applyButtonPosition.DisplayApplyButtonAtStart() || (editButtonPosition.DisplayEditButtonAtStart() && editTrigger == TableEditTrigger.EditButton))
+		{
+			<col style="width:50px;" />
+		}
+		<col style="width:50px;" />
+		<col style="width:80px;" />
+		<col style="width:50%;" />
+		<col />
+		<col />
+		@if (applyButtonPosition.DisplayApplyButtonAtEnd() || (editButtonPosition.DisplayEditButtonAtEnd() && editTrigger == TableEditTrigger.EditButton))
+		{
+			<col style="width:50px;" />
+		}
+	</ColGroup>
+	<HeaderContent>
+		<MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<Patient, object>(x=>x.DateNaissance)">Date de naissance</MudTableSortLabel></MudTh>
+		<MudTh><MudTableSortLabel SortBy="new Func<Patient, object>(x=>x.Prenom)">Prénom</MudTableSortLabel></MudTh>
+		<MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<Patient, object>(x=>x.Nom)">Nom </MudTableSortLabel></MudTh>
+		<MudTh><MudTableSortLabel SortBy="new Func<Patient, object>(x=>x.NomMedecin)">Médecin</MudTableSortLabel></MudTh>
+		<MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="new Func<Patient, object>(x=>x.DatePriseEnCharge)">Date de prise en charge</MudTableSortLabel></MudTh>
+	</HeaderContent>
+	<RowTemplate>
+		<MudTd DataLabel="DateNaissance">@context.DateNaissance.ToString("dd/MM/yyyy")</MudTd>
+		<MudTd DataLabel="Prenom">@context.Prenom</MudTd>
+		<MudTd DataLabel="Nom">@context.Nom</MudTd>
+		<MudTd DataLabel="Medecin">@context.NomMedecin</MudTd>
+		<MudTd DataLabel="DatePriseEnCharge">@context.DatePriseEnCharge.ToString("dd/MM/yyyy")</MudTd>
+	</RowTemplate>
+	<RowEditingTemplate>
+				<MudTd DataLabel="DateNaissance">
+			<MudDatePicker Required Date="@context.DateNaissance.Date"
+																		DateChanged="@(d => context.DateNaissance = d.Value)" />
+
+				</MudTd>
+				<MudTd DataLabel="Prenom">
+								<MudTextField @bind-Value="@context.Prenom" Required />
+				</MudTd>
+				<MudTd DataLabel="Nom">
+								<MudTextField @bind-Value="@context.Nom" Required />
+				</MudTd>
+				<MudTd DataLabel="Medecin">
+								<MudTextField @bind-Value="@context.NomMedecin" Required />
+				</MudTd>
+				<MudTd DataLabel="DatePriseEncharge">
+												<MudDatePicker Required Date="@context.DatePriseEnCharge.Date"
+																		DateChanged="@(d => context.DatePriseEnCharge = d.Value)" />
+				</MudTd>
+</RowEditingTemplate>
+				<PagerContent>
+				<MudTablePager />
+				</PagerContent>
+				<EditButtonContent Context="button">
+				<MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" Class="pa-0" OnClick="@button.ButtonAction" Disabled="@button.ButtonDisabled" />
+				</EditButtonContent>
+				</MudTable>
+
+
+<MudText Inline="true">Selected1: @selectedItem1?.Nom</MudText>
+
+<MudExpansionPanels Style="flex: 1;">
+	<MudExpansionPanel Text="Show inline-edit event log">
+		@foreach (var message in editEvents)
+		{
+			<MudText>@message</MudText>
+		}
+		@if (editEvents.Count > 0)
+		{
+			<div class="d-flex">
+				<MudSpacer />
+				<MudButton Class="mt-3" ButtonType="ButtonType.Button" Variant="Variant.Filled" OnClick="ClearEventLog">Clear event log</MudButton>
+			</div>
+		}
+	</MudExpansionPanel>
+</MudExpansionPanels>
+
+
+@code {
+	private bool dense = false;
+	private bool hover = true;
+	private bool ronly = false;
+	private bool canCancelEdit = false;
+	private bool blockSwitch = false;
+	private List<string> editEvents = new();
+	private string searchString = "";
+	private Patient selectedItem1 = null;
+	private Patient PatientBeforeEdit;
+	private HashSet<Patient> selectedItems1 = new HashSet<Patient>();
+	private TableApplyButtonPosition applyButtonPosition = TableApplyButtonPosition.End;
+	private TableEditButtonPosition editButtonPosition = TableEditButtonPosition.End;
+	private TableEditTrigger editTrigger = TableEditTrigger.RowClick;
+	private IEnumerable<Patient> patients = new List<Patient>();
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		patients = await PatientService.GetPatientAsync();
+	}
+
+	private void ClearEventLog()
+	{
+		editEvents.Clear();
+	}
+
+	private void AddEditionEvent(string message)
+	{
+		editEvents.Add(message);
+		StateHasChanged();
+	}
+
+	private void BackupItem(object Patient)
+	{
+		PatientBeforeEdit = new()
+			{
+				Id = ((Patient)Patient).Id,
+				Nom = ((Patient)Patient).Nom,
+				Prenom = ((Patient)Patient).Prenom,
+				DateNaissance = ((Patient)Patient).DateNaissance,
+				DatePriseEnCharge = ((Patient)Patient).DatePriseEnCharge,
+				NomMedecin = ((Patient)Patient).NomMedecin
+			};
+		AddEditionEvent($"RowEditPreview event: made a backup of Patient {((Patient)Patient).Nom}");
+	}
+
+	private void ItemHasBeenCommitted(object Patient)
+	{
+		AddEditionEvent($"RowEditCommit event: Changes to Patient {((Patient)Patient).Nom} committed");
+	}
+
+	private void ResetItemToOriginalValues(object Patient)
+	{
+		((Patient)Patient).Id = PatientBeforeEdit.Id;
+		((Patient)Patient).Nom = PatientBeforeEdit.Nom;
+		((Patient)Patient).Prenom = PatientBeforeEdit.Prenom;
+		((Patient)Patient).DateNaissance = PatientBeforeEdit.DateNaissance;
+		((Patient)Patient).DatePriseEnCharge = PatientBeforeEdit.DatePriseEnCharge;
+		((Patient)Patient).NomMedecin = PatientBeforeEdit.NomMedecin;
+		AddEditionEvent($"RowEditCancel event: Editing of Patient {((Patient)Patient).Nom} canceled");
+	}
+
+	private bool FilterFunc(Patient Patient)
+	{
+		if (string.IsNullOrWhiteSpace(searchString))
+			return true;
+		if (Patient.Nom.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+			return true;
+		if (Patient.Prenom.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+			return true;
+		if (Patient.NomMedecin.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+			return true;
+
+		return false;
+	}
 }
